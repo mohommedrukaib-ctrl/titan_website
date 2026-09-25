@@ -179,7 +179,7 @@ export function readDb(force = false) {
 }
 
 /** Serialised read-modify-write. Always writes a backup first. */
-export function mutate(fn, { reason = 'update', backup = true, silent = false } = {}) {
+export function mutate(fn, { reason = 'update', backup = true, silent = true } = {}) {
   const run = () => {
     const db = readDb(true);
     const next = fn(db) || db;

@@ -214,6 +214,12 @@ export function addInquiry(payload) {
     db.inquiries.unshift(inquiry);
     return db;
   }, { reason: 'inquiry.received' });
+  logActivity({
+    action: 'inquiry.received',
+    detail: `New ${inquiry.eventType} inquiry from ${inquiry.name}`,
+    ip: inquiry.ip,
+    actor: 'visitor',
+  });
   return inquiry;
 }
 

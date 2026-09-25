@@ -68,7 +68,8 @@ body {
   line-height: 1.65;
   font-weight: 300;
   letter-spacing: 0.01em;
-  overflow-x: hidden;
+  overflow-x: hidden; /* fallback for very old browsers */
+  overflow-x: clip;   /* keeps position:sticky working (see .filter-bar) */
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -294,7 +295,7 @@ h3 { font-size: clamp(1.2rem, 1.6vw, 1.55rem); }
   overflow-y: auto;
 }
 .mobile-nav.is-open { transform: translateX(0); }
-.mobile-nav a {
+.mobile-nav > a:not(.btn) {
   padding: 1rem 0.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 0.92rem;
@@ -305,8 +306,8 @@ h3 { font-size: clamp(1.2rem, 1.6vw, 1.55rem); }
   align-items: center;
   justify-content: space-between;
 }
-.mobile-nav a:hover, .mobile-nav a.is-active { color: var(--gold-soft); }
-.mobile-nav .btn { margin-top: 1.4rem; }
+.mobile-nav > a:not(.btn):hover, .mobile-nav > a.is-active { color: var(--gold-soft); }
+.mobile-nav .btn { margin-top: 1.4rem; justify-content: center; border-bottom: 0; padding: 0.95rem 1.5rem; font-size: .78rem; }
 .mobile-nav__foot { margin-top: auto; padding-top: 1.5rem; font-size: 0.8rem; color: var(--muted); }
 .mobile-nav__foot a { border: 0; padding: 0.3rem 0; text-transform: none; letter-spacing: 0.02em; justify-content: flex-start; }
 
