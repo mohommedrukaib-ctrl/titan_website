@@ -1,0 +1,33 @@
+<article class="event-card reveal" data-delay="<%= locals.delay || 0 %>">
+  <div class="event-card__media">
+    <% if (e.poster) { %>
+    <img src="<%= e.poster %>" alt="<%= e.name %> — <%= e.categoryLabel %> in <%= e.venue || 'Sri Lanka' %>" loading="lazy" decoding="async" width="1200" height="800">
+    <% } else { %>
+    <%- include('shimmer', { label: e.categoryLabel }) %>
+    <% } %>
+    <span class="badge event-card__badge"><%- icon(e.categoryIcon, 'ico', 13) %> <%= e.categoryLabel %></span>
+    <% if (e.type === 'past') { %>
+    <span class="badge badge--past" style="position:absolute;top:.9rem;right:.9rem;z-index:2">Past Event</span>
+    <% } %>
+    <div class="event-card__date">
+      <strong><%= e.dayNumber %></strong>
+      <span><%= e.monthShort %> <%= e.year %></span>
+    </div>
+  </div>
+  <div class="event-card__body">
+    <h3 class="event-card__title"><a href="/events/<%= e.slug %>"><%= e.name %></a></h3>
+    <div class="event-card__meta">
+      <span><%- icon('calendar', 'ico', 16) %> <%= e.prettyDate %><% if (e.time) { %> · <%= e.time %><% } %></span>
+      <span><%- icon('pin', 'ico', 16) %> <%= e.venue || 'Venue to be announced' %></span>
+    </div>
+    <p class="event-card__text"><%= fmt.truncate(e.description, 118) %></p>
+    <div class="event-card__foot">
+      <% if (e.type === 'upcoming' && e.ticketLink) { %>
+      <a class="btn btn--gold btn--sm" href="<%= e.ticketLink %>" target="_blank" rel="noopener noreferrer">Get Tickets</a>
+      <% } else { %>
+      <a class="btn btn--outline btn--sm" href="/events/<%= e.slug %>">Event Details</a>
+      <% } %>
+      <a class="link-gold" href="/events/<%= e.slug %>">More<%- icon('arrowRight', 'ico', 14) %></a>
+    </div>
+  </div>
+</article>

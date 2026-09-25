@@ -1,0 +1,66 @@
+<div class="login-screen">
+  <div class="login-card">
+    <div class="login-card__head">
+      <img src="/img/logo-mark.png" alt="TITAN EVENTS" width="74" height="74">
+      <h1>Titan Events</h1>
+      <p>Admin Control Panel</p>
+    </div>
+
+    <% if (locals.flashError) { %>
+    <div class="alert alert--error" role="alert">
+      <%= icon('lock', 'ico', 18) %>
+      <div><%= locals.flashError.message %></div>
+    </div>
+    <% } %>
+    <% if (locals.flashInfo) { %>
+    <div class="alert" role="status">
+      <%= icon('sparkle', 'ico', 18) %>
+      <div><%= locals.flashInfo.message %></div>
+    </div>
+    <% } %>
+
+    <% if (lock && lock.locked && lock.minutes) { %>
+    <div class="alert alert--error" role="alert">
+      <%= icon('clock', 'ico', 18) %>
+      <div>
+        <strong>Sign-in temporarily locked.</strong><br>
+        Too many failed attempts from this connection. Try again in about <%= lock.minutes %> minute(s).
+      </div>
+    </div>
+    <% } %>
+
+    <form action="/admin/login" method="post" autocomplete="on">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="hidden" name="next" value="<%= locals.next || '' %>">
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input class="input" id="username" name="username" type="text" required autofocus autocomplete="username"
+               value="<%= locals.values && locals.values.username ? locals.values.username : '' %>" placeholder="admin">
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="pw-field">
+          <input class="input" id="password" name="password" type="password" required autocomplete="current-password" placeholder="••••••••">
+          <button class="pw-toggle" type="button" data-pw-toggle aria-label="Show password">
+            <%= icon('eye', 'ico', 18) %>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn--gold btn--block btn--lg" type="submit" <%= lock && lock.locked ? 'disabled' : '' %>>
+        <%= icon('lock', 'ico', 16) %> Sign In
+      </button>
+    </form>
+
+    <p class="login-note">
+      <% if (lock && !lock.locked) { %>
+        <%= lock.remaining %> of <%= locals.maxAttempts || 5 %> attempts remaining before this connection is locked.
+      <% } else { %>
+        Attempts are rate limited and logged. Forgot your password? Run <code>npm run reset-password</code> on the server.
+      <% } %>
+    </p>
+    <p class="login-note"><a class="link-gold" href="/"><%= icon('arrowLeft', 'ico', 14) %> Back to website</a></p>
+  </div>
+</div>

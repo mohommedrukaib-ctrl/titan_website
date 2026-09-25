@@ -1,0 +1,47 @@
+<% const nav = [
+  { href: '/', label: 'Home' },
+  { href: '/events', label: 'Events' },
+  { href: '/services', label: 'Services' },
+  { href: '/contact', label: 'Contact' }
+];
+const isActive = (href) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href)); %>
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="TITAN EVENTS home">
+      <img class="brand__mark" src="/img/logo-mark.png" alt="" width="40" height="40">
+      <span class="brand__text">
+        <span class="brand__name">Titan Events</span>
+        <span class="brand__tag">We Light Up Your Moments</span>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Main navigation">
+      <ul class="nav__list">
+        <% nav.forEach(function (item) { %>
+        <li><a class="nav__link <%= isActive(item.href) ? 'is-active' : '' %>" href="<%= item.href %>" <%= isActive(item.href) ? 'aria-current="page"' : '' %>><%= item.label %></a></li>
+        <% }); %>
+      </ul>
+      <a class="btn btn--gold btn--sm" href="/contact">Book Now</a>
+    </nav>
+
+    <button class="nav__toggle" id="navToggle" type="button" aria-controls="mobileNav" aria-expanded="false" aria-label="Open menu">
+      <%- icon('menu', 'ico', 22) %>
+    </button>
+  </div>
+</header>
+
+<aside class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+  <% nav.forEach(function (item) { %>
+  <a class="<%= isActive(item.href) ? 'is-active' : '' %>" href="<%= item.href %>">
+    <span><%= item.label %></span>
+    <%- icon('arrowRight', 'ico', 16) %>
+  </a>
+  <% }); %>
+  <a class="btn btn--gold btn--block" href="/contact">Book Now</a>
+  <div class="mobile-nav__foot">
+    <a href="<%= fmt.telHref(settings.phonePrimary) %>"><%- icon('phone', 'ico', 15) %> <%= settings.phonePrimary %></a>
+    <a href="mailto:<%= settings.email %>"><%- icon('mail', 'ico', 15) %> <%= settings.email %></a>
+    <p class="muted" style="margin-top:.7rem"><%= site.tagline %></p>
+  </div>
+</aside>
+<div class="nav-overlay" id="navOverlay" role="presentation"></div>

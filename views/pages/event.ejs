@@ -1,0 +1,127 @@
+<section class="page-hero">
+  <div class="shell">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a> <span>/</span> <a href="/events">Events</a> <span>/</span> <span><%= event.categoryLabel %></span>
+    </nav>
+    <div class="page-head">
+      <span class="badge <%= event.type === 'past' ? 'badge--past' : '' %>"><%= icon(event.categoryIcon, 'ico', 13) %> <%= event.categoryLabel %> · <%= event.type === 'past' ? 'Past Event' : 'Upcoming Event' %></span>
+      <h1 style="margin-top:1rem"><%= event.name %></h1>
+      <p class="lead"><%= event.longDate %><%= event.time ? ' · ' + event.time : '' %><% if (event.venue) { %> · <%= event.venue %><% } %></p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="shell detail-grid">
+    <div class="reveal">
+      <div class="detail-hero">
+        <% if (event.poster) { %>
+        <img src="<%= event.poster %>" alt="<%= event.name %> — <%= event.categoryLabel %> in <%= event.venue %>" width="1200" height="800">
+        <% } else { %>
+        <%- include('../partials/shimmer', { label: event.categoryLabel }) %>
+        <% } %>
+        <span class="badge badge--gold detail-hero__badge"><%= event.dayNumber %> <%= event.monthShort %> <%= event.year %></span>
+      </div>
+
+      <div class="detail-body prose" style="margin-top:2rem">
+        <h2 style="font-size:1.7rem;margin-bottom:1rem">About this event</h2>
+        <%- fmt.paragraphs(event.description) %>
+      </div>
+
+      <div class="divider-mark" style="margin:2.6rem 0">
+        <%= icon('sparkle', 'ico', 22) %>
+      </div>
+
+      <div class="btn-row">
+        <% if (event.type === 'upcoming' && event.ticketLink) { %>
+        <a class="btn btn--gold" href="<%= event.ticketLink %>" target="_blank" rel="noopener noreferrer">
+          <%= icon('ticket', 'ico', 16) %> Get Tickets
+        </a>
+        <% } %>
+        <a class="btn btn--outline" href="/contact?event=<%= encodeURIComponent(event.name) %>">
+          <%= icon('mail', 'ico', 16) %> Ask About This Event
+        </a>
+        <button class="btn btn--ghost" type="button" id="shareBtn" data-title="<%= event.name %>">
+          <%= icon('external', 'ico', 16) %> Share
+        </button>
+      </div>
+    </div>
+
+    <aside class="detail-panel reveal" data-delay="2" aria-label="Event details">
+      <h3 style="font-size:1.15rem">Event Details</h3>
+      <dl>
+        <div>
+          <dt>Date</dt>
+          <dd><%= event.longDate %><% if (event.time) { %> · <%= event.time %><% } %></dd>
+        </div>
+        <div>
+          <dt>Venue</dt>
+          <dd><%= event.venue || 'To be announced' %></dd>
+        </div>
+        <div>
+          <dt>Category</dt>
+          <dd><%= event.categoryLabel %></dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd>
+            <% if (event.type === 'past') { %>Completed
+            <% } else { %><span data-countdown="<%= event.date %>T<%= event.time || '18:00' %>:00">Upcoming</span><% } %>
+          </dd>
+        </div>
+        <% if (event.ticketLink && event.type === 'upcoming') { %>
+        <div>
+          <dt> Tickets</dt>
+          <dd><a class="gold" href="<%= event.ticketLink %>" target="_blank" rel="noopener noreferrer">Available online →</a></dd>
+        </div>
+        <% } %>
+      </dl>
+
+      <% if (event.type === 'upcoming') { %>
+      <a class="btn btn--gold btn--block" href="<%= event.ticketLink || '/contact' %>" <%= event.ticketLink ? 'target="_blank" rel="noopener noreferrer"' : '' %>>
+        <%= event.ticketLink ? 'Get Tickets' : 'Reserve Your Place' %>
+      </a>
+      <% } %>
+      <a class="btn btn--outline btn--block" href="<%= fmt.telHref(settings.phonePrimary) %>">Call <%= settings.phonePrimary %></a>
+      <p class="muted" style="font-size:.78rem;text-align:center">
+        Planned & produced by Titan Events · <%= settings.email %>
+      </p>
+    </aside>
+  </div>
+</section>
+
+<% if (related.length) { %>
+<section class="section section--panel">
+  <div class="shell">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow">More From Titan</span>
+      <h2><%= event.type === 'past' ? 'Other Past Events' : 'Other Upcoming Events' %></h2>
+    </div>
+    <div class="grid grid--3">
+      <% related.forEach(function (e, i) { %>
+      <%- include('../partials/event-card', { e, delay: (i % 3) + 1 }) %>
+      <% }); %>
+    </div>
+    <div class="btn-row btn-row--center" style="margin-top:2.4rem">
+      <a class="btn btn--outline" href="/events?type=<%= event.type %>">View All <%= event.type === 'past' ? 'Past' : 'Upcoming' %> Events</a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<script>
+  (function () {
+    var btn = document.getElementById('shareBtn');
+    if (!btn) return;
+    btn.addEventListener('click', async function () {
+      var data = { title: document.title, text: btn.dataset.title, url: location.href };
+      try {
+        if (navigator.share) { await navigator.share(data); return; }
+        await navigator.clipboard.writeText(location.href);
+        window.titanToast && window.titanToast('Event link copied to your clipboard.', 'success');
+      } catch (e) {
+        window.titanToast && window.titanToast('Copy this page URL to share: ' + location.href, 'info');
+      }
+    });
+  })();
+</script>

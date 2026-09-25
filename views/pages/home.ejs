@@ -1,0 +1,228 @@
+<!-- ============================= HERO ============================= -->
+<section class="hero" id="top">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <img class="hero__mark" src="/img/logo-mark.png" alt="TITAN EVENTS emblem" width="132" height="132">
+    <span class="eyebrow">Sri Lanka's Premier Event Organizers</span>
+    <h1>We Light Up <span class="gold-text">Your Moments</span></h1>
+    <p class="lead" style="text-align:center">
+      Weddings, parties, concerts and corporate events — planned, designed, produced, ticketed and filmed
+      by five specialized divisions working as one team.
+    </p>
+    <div class="btn-row btn-row--center hero__actions">
+      <a class="btn btn--gold btn--lg" href="/events">View Events<%- icon('arrowRight', 'ico', 16) %></a>
+      <a class="btn btn--outline btn--lg" href="/contact">Book Now</a>
+    </div>
+    <div class="hero__meta">
+      <span><%- icon('pin', 'ico', 14) %> Colombo · Island-wide</span>
+      <span><%- icon('users', 'ico', 14) %> 500+ events delivered</span>
+      <span><%- icon('clock', 'ico', 14) %> Quotes within 24 hours</span>
+    </div>
+  </div>
+  <a class="scroll-cue" href="#stats" aria-label="Scroll to statistics">
+    <span>Scroll</span>
+    <span class="scroll-cue__line"></span>
+  </a>
+</section>
+
+<!-- ============================ STATS ============================ -->
+<section class="section section--tight section--panel" id="stats">
+  <div class="shell">
+    <div class="stats reveal">
+      <% stats.forEach(function (stat) { %>
+      <div class="stat">
+        <div class="stat__value" data-count="<%= stat.value %>" data-format="<%= stat.format || 'plain' %>">0</div>
+        <div class="stat__label"><%= stat.label %></div>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= UPCOMING EVENTS ======================= -->
+<section class="section" id="events">
+  <div class="shell">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow">What's Next</span>
+      <h2>Upcoming Events</h2>
+      <p>Concerts, showcases and celebrations already on our calendar. Reserve your tickets or come and see how we work before you book.</p>
+    </div>
+
+    <div class="grid grid--3">
+      <% if (upcoming.length) { %>
+        <% upcoming.forEach(function (e, i) { %>
+          <%- include('../partials/event-card', { e, delay: (i % 3) + 1 }) %>
+        <% }); %>
+      <% } else { %>
+        <div class="empty-state reveal">
+          <img src="/img/logo-mark.png" alt="" width="68" height="68" loading="lazy">
+          <h3>No upcoming events listed right now</h3>
+          <p>Our next season is being planned. Follow us on social media, or get in touch to secure a date for your own celebration.</p>
+          <a class="btn btn--gold" href="/contact">Plan Your Event</a>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="btn-row btn-row--center" style="margin-top:2.6rem">
+      <a class="btn btn--outline" href="/events">View All Events<%- icon('arrowRight', 'ico', 16) %></a>
+      <a class="btn btn--ghost" href="/events?type=past">See Past Events</a>
+    </div>
+  </div>
+</section>
+
+<!-- ========================== DIVISIONS ========================== -->
+<section class="section section--panel section--glow" id="divisions">
+  <div class="shell">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow">One Group · Five Specialists</span>
+      <h2>Our Divisions</h2>
+      <p>Everything your event needs, handled in-house — from the first sketch to the final edit.</p>
+    </div>
+
+    <div class="grid grid--5">
+      <% divisions.forEach(function (d, i) { %>
+      <article class="card reveal" data-delay="<%= (i % 5) + 1 %>">
+        <div class="why__icon" style="margin-bottom:1.1rem"><%- icon(d.icon, 'ico', 22) %></div>
+        <h3><%= d.name %></h3>
+        <p class="gold" style="font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;margin:.5rem 0 .8rem"><%= d.tagline %></p>
+        <p class="muted" style="font-size:.88rem"><%= d.short %></p>
+        <a class="link-gold" style="margin-top:1.2rem;display:inline-flex" href="/services#<%= d.slug %>">Explore<%- icon('arrowRight', 'ico', 14) %></a>
+      </article>
+      <% }); %>
+    </div>
+
+    <div class="btn-row btn-row--center" style="margin-top:2.6rem">
+      <a class="btn btn--gold" href="/services">Learn More About Our Services</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= VISION & MISSION ====================== -->
+<section class="section" id="about">
+  <div class="shell vision">
+    <div class="reveal">
+      <span class="eyebrow"><%= vision.eyebrow %></span>
+      <h2 style="margin-top:.8rem"><%= vision.title %></h2>
+      <p class="lead" style="margin-top:1.2rem"><%= vision.lead %></p>
+      <div class="values" style="margin-top:2rem">
+        <% vision.values.forEach(function (v) { %>
+        <div class="value">
+          <%- icon(v.icon, 'ico', 18) %>
+          <div>
+            <strong><%= v.title %></strong>
+            <p><%= v.text %></p>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="vision__card reveal" data-delay="2">
+      <div class="vm">
+        <span class="vm__label">Our Vision</span>
+        <p><%= vision.vision %></p>
+      </div>
+      <div class="vm">
+        <span class="vm__label">Our Mission</span>
+        <p><%= vision.mission %></p>
+      </div>
+      <div class="vm">
+        <span class="vm__label">Where We're Going</span>
+        <p>
+          Expanding to a full-service event campus in Colombo with an in-house studio, rehearsal stage and
+          ticketing helpdesk — plus dedicated destination teams in Kandy, Galle and Jaffna.
+        </p>
+      </div>
+      <a class="btn btn--outline btn--sm" href="/contact">Work With Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== ANNOUNCEMENTS ======================== -->
+<section class="section section--panel" id="announcements">
+  <div class="shell">
+    <div class="section-head reveal">
+      <span class="eyebrow">Latest From The Team</span>
+      <h2>Announcements</h2>
+      <p>New projects, equipment, and important notices for our clients and partners.</p>
+    </div>
+
+    <% if (announcements.length) { %>
+    <div class="grid grid--3">
+      <% announcements.forEach(function (a, i) { %>
+      <article class="announce reveal" data-delay="<%= (i % 3) + 1 %>">
+        <span class="announce__date"><%- icon('megaphone', 'ico', 13) %> <%= a.prettyDate %></span>
+        <h3><%= a.title %></h3>
+        <p><%= fmt.truncate(a.content, 190) %></p>
+      </article>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <div class="empty-state reveal">
+      <img src="/img/logo-mark.png" alt="" width="68" height="68" loading="lazy">
+      <h3>No announcements yet</h3>
+      <p>Company updates will appear here. Check back soon, or follow our social channels.</p>
+    </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- ========================= WHY CHOOSE US ======================= -->
+<section class="section" id="why">
+  <div class="shell">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow">Why Titan Events</span>
+      <h2>Why Clients Choose Us</h2>
+      <p>A dozen years of Sri Lankan weddings, galas and stadium shows have taught us what actually matters on the day.</p>
+    </div>
+
+    <div class="why reveal">
+      <% whyUs.forEach(function (w) { %>
+      <div class="why__item">
+        <div class="why__icon"><%- icon(w.icon, 'ico', 22) %></div>
+        <h3><%= w.title %></h3>
+        <p><%= w.text %></p>
+      </div>
+      <% }); %>
+    </div>
+
+    <div class="section" style="padding-bottom:0">
+      <div class="section-head section-head--center reveal" style="padding-top:3.5rem">
+        <span class="eyebrow">How We Work</span>
+        <h2>From First Call To Final Curtain</h2>
+      </div>
+      <div class="process reveal">
+        <% process.forEach(function (p) { %>
+        <div class="step">
+          <span class="step__no"><%= p.step %></span>
+          <h3><%= p.title %></h3>
+          <p><%= p.text %></p>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================  CTA  =========================== -->
+<section class="section section--tight">
+  <div class="shell">
+    <div class="cta-band reveal">
+      <span class="eyebrow">Let's Talk</span>
+      <h2 style="margin-top:.8rem">Ready to Create Something Extraordinary?</h2>
+      <p class="lead lead--center">
+        Tell us the date, the venue and the feeling you want in the room. We'll come back with a concept,
+        a plan and a clear price — usually within 24 hours.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn--gold btn--lg" href="<%= fmt.telHref(settings.phonePrimary) %>">
+          <%- icon('phone', 'ico', 16) %> <%= settings.phonePrimary %>
+        </a>
+        <a class="btn btn--outline btn--lg" href="<%= fmt.telHref(settings.phoneSecondary) %>">
+          <%- icon('phone', 'ico', 16) %> <%= settings.phoneSecondary %>
+        </a>
+        <a class="btn btn--ghost btn--lg" href="/contact">Send an Inquiry</a>
+      </div>
+    </div>
+  </div>
+</section>

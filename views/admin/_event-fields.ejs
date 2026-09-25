@@ -1,0 +1,100 @@
+<% const v = locals.values || {}; const errs = locals.errors || {}; const isEdit = locals.mode === 'edit'; %>
+<div class="form-grid">
+  <div class="field span-2 <%= errs.name ? 'has-error' : '' %>">
+    <label for="<%= locals.prefix || 'q' %>-name">Event Name <span class="req">*</span></label>
+    <input class="input" id="<%= locals.prefix || 'q' %>-name" name="name" type="text" required maxlength="160"
+           value="<%= v.name || '' %>" placeholder="e.g. Titan NYE: Skyline Sessions">
+    <% if (errs.name) { %><span class="field__error"><%= errs.name %></span><% } %>
+  </div>
+
+  <div class="field <%= errs.date ? 'has-error' : '' %>">
+    <label for="<%= locals.prefix || 'q' %>-date">Event Date <span class="req">*</span></label>
+    <input class="input" id="<%= locals.prefix || 'q' %>-date" name="date" type="date" required value="<%= v.date || '' %>">
+    <% if (errs.date) { %><span class="field__error"><%= errs.date %></span><% } %>
+  </div>
+
+  <div class="field">
+    <label for="<%= locals.prefix || 'q' %>-time">Start Time <span class="muted">(optional)</span></label>
+    <input class="input" id="<%= locals.prefix || 'q' %>-time" name="time" type="time" value="<%= v.time || '' %>">
+  </div>
+
+  <div class="field span-2 <%= errs.venue ? 'has-error' : '' %>">
+    <label for="<%= locals.prefix || 'q' %>-venue">Venue <span class="req">*</span></label>
+    <input class="input" id="<%= locals.prefix || 'q' %>-venue" name="venue" type="text" required maxlength="200"
+           value="<%= v.venue || '' %>" placeholder="e.g. Cinnamon Grand, Colombo">
+    <% if (errs.venue) { %><span class="field__error"><%= errs.venue %></span><% } %>
+  </div>
+
+  <div class="field <%= errs.category ? 'has-error' : '' %>">
+    <label for="<%= locals.prefix || 'q' %>-category">Category <span class="req">*</span></label>
+    <select class="select" id="<%= locals.prefix || 'q' %>-category" name="category" required>
+      <% eventCategories.forEach(function (c) { %>
+      <option value="<%= c.key %>" <%= (v.category === c.key) ? 'selected' : '' %>><%= c.label %></option>
+      <% }); %>
+    </select>
+    <% if (errs.category) { %><span class="field__error"><%= errs.category %></span><% } %>
+  </div>
+
+  <div class="field">
+    <label for="<%= locals.prefix || 'q' %>-ticket">Ticket Link <span class="muted">(optional)</span></label>
+    <input class="input" id="<%= locals.prefix || 'q' %>-ticket" name="ticketLink" type="url" maxlength="500"
+           value="<%= v.ticketLink || '' %>" placeholder="https://tickets.titanevents.lk/…">
+    <% if (errs.ticketLink) { %><span class="field__error"><%= errs.ticketLink %></span><% } else { %>
+    <span class="field__hint">Shows the “Get Tickets” button on the event card.</span>
+    <% } %>
+  </div>
+
+  <div class="field span-2">
+    <label>Event Type</label>
+    <div class="seg">
+      <label>
+        <input type="radio" name="type" value="upcoming" <%= v.type !== 'past' ? 'checked' : '' %>>
+        <span>Upcoming</span>
+      </label>
+      <label>
+        <input type="radio" name="type" value="past" <%= v.type === 'past' ? 'checked' : '' %>>
+        <span>Past Event</span>
+      </label>
+    </div>
+    <span class="field__hint">Upcoming events appear first on the homepage and keep their ticket button.</span>
+  </div>
+
+  <div class="field span-2 <%= errs.description ? 'has-error' : '' %>">
+    <label for="<%= locals.prefix || 'q' %>-description">Description <span class="req">*</span></label>
+    <textarea class="textarea" id="<%= locals.prefix || 'q' %>-description" name="description" required maxlength="4000"
+              data-autogrow placeholder="A short, inviting description of the event — what it is, what's included, who it's for."><%= v.description || '' %></textarea>
+    <% if (errs.description) { %><span class="field__error"><%= errs.description %></span><% } %>
+  </div>
+
+  <div class="field span-2 <%= errs.poster ? 'has-error' : '' %>">
+    <label for="<%= locals.prefix || 'q' %>-poster">Poster Image <span class="muted">(optional)</span></label>
+    <input class="input" id="<%= locals.prefix || 'q' %>-poster" name="poster" type="file"
+           accept="image/jpeg,image/png,image/webp,image/avif,image/gif,image/tiff"
+           data-preview="<%= locals.prefix || 'q' %>-poster-preview">
+    <span class="field__hint" id="<%= locals.prefix || 'q' %>-poster-preview-note">
+      JPG, PNG, WEBP, AVIF or GIF up to <%= locals.uploadLimits ? uploadLimits.label : '12 MB' %>. Images are automatically
+      resized, compressed and stripped of metadata to keep the website fast.
+      <% if (event && event.poster) { %>Uploading a new file replaces the current poster. Leave empty to keep it.<% } %>
+      <% if (!event || !event.poster) { %>If you leave this empty, a gold Titan placeholder graphic is shown automatically.<% } %>
+    </span>
+    <% if (errs.poster) { %><span class="field__error"><%= errs.poster %></span><% } %>
+
+    <% if (event && event.poster) { %>
+    <div class="poster-preview" style="margin-top:.9rem">
+      <img id="<%= locals.prefix || 'q' %>-poster-preview" src="<%= event.poster %>" alt="Current poster">
+      <div class="poster-preview__note">
+        <strong>Current poster</strong><br>
+        <label class="switch" style="margin-top:.5rem">
+          <input type="checkbox" name="removePoster" value="1" <%= v.removePoster ? 'checked' : '' %>>
+          Remove the existing poster (use the gold placeholder)
+        </label>
+      </div>
+    </div>
+    <% } else { %>
+    <div class="poster-preview" style="margin-top:.9rem" hidden>
+      <img id="<%= locals.prefix || 'q' %>-poster-preview" alt="Selected poster preview" hidden>
+      <div class="poster-preview__note">Preview of the image you selected.</div>
+    </div>
+    <% } %>
+  </div>
+</div>

@@ -1,0 +1,267 @@
+<!-- ------------------------------ stats ------------------------------ -->
+<div class="a-grid a-grid--4">
+  <a class="a-card a-stat a-stat--link" href="#upcoming-list">
+    <span class="a-stat__label">Upcoming Events</span>
+    <span class="a-stat__value" data-count="<%= stats.upcoming %>">0</span>
+    <span class="a-stat__meta">Published &amp; visible on the homepage</span>
+  </a>
+  <a class="a-card a-stat a-stat--link" href="#past-list">
+    <span class="a-stat__label">Past Events</span>
+    <span class="a-stat__value" data-count="<%= stats.past %>">0</span>
+    <span class="a-stat__meta">Archive &amp; portfolio</span>
+  </a>
+  <a class="a-card a-stat a-stat--link" href="/admin/inquiries">
+    <span class="a-stat__label">Inquiries</span>
+    <span class="a-stat__value" data-count="<%= stats.inquiries %>">0</span>
+    <span class="a-stat__meta">
+      <% if (stats.newInquiries) { %><span class="pill"><%= stats.newInquiries %> new</span><% } else { %>All read<% } %>
+    </span>
+  </a>
+  <a class="a-card a-stat a-stat--link" href="#announcements">
+    <span class="a-stat__label">Announcements</span>
+    <span class="a-stat__value" data-count="<%= stats.announcements %>">0</span>
+    <span class="a-stat__meta">Shown on the homepage</span>
+  </a>
+</div>
+
+<!-- --------------------------- quick add event ----------------------- -->
+<details class="collapse" open id="quick-add">
+  <summary><%- icon('plus', 'ico', 18) %> Quick Add Event <span class="pill pill--muted"><%= stats.events %> total</span></summary>
+  <div class="collapse__body">
+    <form action="/admin/events" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <%- include('./_event-fields', { values: { date: today, time: '18:30', category: 'wedding', type: 'upcoming' }, errors: {}, event: null, eventCategories, uploadLimits, mode: 'create', prefix: 'q' }) %>
+      <div class="a-head" style="margin:1rem 0 0">
+        <button class="btn btn--gold" type="submit"><%- icon('check', 'ico', 16) %> Publish Event</button>
+        <a class="btn btn--ghost btn--sm" href="/admin/events/new">Open full form</a>
+      </div>
+    </form>
+  </div>
+</details>
+
+<!-- --------------------------- upcoming list ------------------------- -->
+<section class="a-card a-card--pad" id="upcoming-list">
+  <div class="a-head">
+    <div>
+      <h2>Upcoming Events</h2>
+      <p><%= upcoming.length %> published</p>
+    </div>
+    <a class="btn btn--outline btn--sm" href="/admin/events/new"><%- icon('plus', 'ico', 15) %> Add Event</a>
+  </div>
+
+  <% if (upcoming.length) { %>
+  <div class="table-wrap">
+    <table class="a-table">
+      <thead>
+        <tr>
+          <th>Poster</th><th>Event</th><th>Date</th><th>Category</th><th>Tickets</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% upcoming.forEach(function (e) { %>
+        <tr>
+          <td>
+            <% if (e.poster) { %>
+            <img class="thumb" src="<%= e.poster %>" alt="" loading="lazy">
+            <% } else { %>
+            <span class="badge">Placeholder</span>
+            <% } %>
+          </td>
+          <td>
+            <strong><%= e.name %></strong><br>
+            <span class="muted" style="font-size:.78rem"><%= e.venue %></span>
+          </td>
+          <td><%= e.prettyDate %><% if (e.time) { %><br><span class="muted" style="font-size:.78rem"><%= e.time %></span><% } %></td>
+          <td><span class="badge"><%= e.categoryLabel %></span></td>
+          <td>
+            <% if (e.ticketLink) { %><a class="link-gold" href="<%= e.ticketLink %>" target="_blank" rel="noopener">Link</a>
+            <% } else { %><span class="muted">—</span><% } %>
+          </td>
+          <td>
+            <div class="row-actions">
+              <a class="icon-btn" href="/admin/events/<%= e.id %>/edit" title="Edit event" aria-label="Edit <%= e.name %>"><%- icon('edit', 'ico', 16) %></a>
+              <form action="/admin/events/<%= e.id %>/toggle-type" method="post" data-confirm="Move “<%= e.name %>” to Past Events? It will leave the homepage upcoming list.">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <button class="icon-btn" type="submit" title="Move to past events" aria-label="Move to past"><%- icon('clock', 'ico', 16) %></button>
+              </form>
+              <form action="/admin/events/<%= e.id %>/delete" method="post" data-confirm="Delete “<%= e.name %>” permanently? A backup of the current data is saved automatically.">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <button class="icon-btn icon-btn--danger" type="submit" title="Delete event" aria-label="Delete <%= e.name %>"><%- icon('trash', 'ico', 16) %></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <% } else { %>
+  <div class="empty-state">
+    <img src="/img/logo-mark.png" alt="" width="60" height="60" loading="lazy">
+    <h3>No upcoming events yet</h3>
+    <p>Use the Quick Add form above to publish your first event — it appears on the website instantly.</p>
+  </div>
+  <% } %>
+</section>
+
+<!-- ----------------------------- past list --------------------------- -->
+<section class="a-card a-card--pad" id="past-list">
+  <div class="a-head">
+    <div>
+      <h2>Past Events</h2>
+      <p><%= past.length %> in the archive</p>
+    </div>
+  </div>
+
+  <% if (past.length) { %>
+  <div class="table-wrap">
+    <table class="a-table">
+      <thead><tr><th>Poster</th><th>Event</th><th>Date</th><th>Category</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% past.forEach(function (e) { %>
+        <tr>
+          <td>
+            <% if (e.poster) { %>
+            <img class="thumb" src="<%= e.poster %>" alt="" loading="lazy">
+            <% } else { %><span class="badge badge--past">Placeholder</span><% } %>
+          </td>
+          <td><strong><%= e.name %></strong><br><span class="muted" style="font-size:.78rem"><%= e.venue %></span></td>
+          <td><%= e.prettyDate %></td>
+          <td><span class="badge"><%= e.categoryLabel %></span></td>
+          <td>
+            <div class="row-actions">
+              <a class="icon-btn" href="/admin/events/<%= e.id %>/edit" title="Edit event" aria-label="Edit <%= e.name %>"><%- icon('edit', 'ico', 16) %></a>
+              <form action="/admin/events/<%= e.id %>/toggle-type" method="post" data-confirm="Move “<%= e.name %>” back to Upcoming Events?">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <button class="icon-btn" type="submit" title="Move to upcoming" aria-label="Move to upcoming"><%- icon('calendar', 'ico', 16) %></button>
+              </form>
+              <form action="/admin/events/<%= e.id %>/delete" method="post" data-confirm="Delete “<%= e.name %>” permanently?">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <button class="icon-btn icon-btn--danger" type="submit" title="Delete event" aria-label="Delete <%= e.name %>"><%- icon('trash', 'ico', 16) %></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <% } else { %>
+  <div class="empty-state">
+    <img src="/img/logo-mark.png" alt="" width="60" height="60" loading="lazy">
+    <h3>No past events recorded</h3>
+    <p>When an event finishes, use the clock button on an upcoming event to move it into the archive.</p>
+  </div>
+  <% } %>
+</section>
+
+<!-- --------------------------- announcements ------------------------- -->
+<section class="a-grid a-grid--2e" id="announcements">
+  <div class="a-card a-card--pad">
+    <div class="a-head">
+      <div>
+        <h2>Post an Announcement</h2>
+        <p>Appears in the homepage “Announcements” section immediately.</p>
+      </div>
+    </div>
+    <form action="/admin/announcements" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="field">
+        <label for="ann-title">Title</label>
+        <input class="input" id="ann-title" name="title" type="text" required maxlength="200" placeholder="e.g. Now booking 2026 weddings">
+      </div>
+      <div class="field">
+        <label for="ann-content">Content</label>
+        <textarea class="textarea" id="ann-content" name="content" required maxlength="4000" data-autogrow
+                  placeholder="A short update for clients and partners…"></textarea>
+        <span class="field__hint"><span data-counter-for="ann-content">0 / 4000</span></span>
+      </div>
+      <button class="btn btn--gold" type="submit"><%- icon('megaphone', 'ico', 16) %> Publish Announcement</button>
+    </form>
+  </div>
+
+  <div class="a-card a-card--pad">
+    <div class="a-head">
+      <div>
+        <h2>Recent Announcements</h2>
+        <p><%= announcements.length %> shown on the website</p>
+      </div>
+    </div>
+    <% if (announcements.length) { %>
+    <div class="timeline">
+      <% announcements.forEach(function (a) { %>
+      <div class="timeline__item">
+        <span class="timeline__at"><%= a.prettyDate %></span>
+        <div>
+          <div class="timeline__detail"><strong><%= a.title %></strong></div>
+          <p class="muted" style="font-size:.82rem;margin-top:.25rem"><%= fmt.truncate(a.content, 130) %></p>
+          <form action="/admin/announcements/<%= a.id %>/delete" method="post" style="margin-top:.5rem"
+                data-confirm="Delete the announcement “<%= a.title %>”?">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <button class="btn btn--danger btn--sm" type="submit"><%- icon('trash', 'ico', 14) %> Delete</button>
+          </form>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <p class="muted">No announcements yet. Post your first update using the form.</p>
+    <% } %>
+  </div>
+</section>
+
+<!-- ------------------------ inquiries + activity --------------------- -->
+<section class="a-grid a-grid--2e">
+  <div class="a-card a-card--pad">
+    <div class="a-head">
+      <div>
+        <h2>Latest Inquiries</h2>
+        <p><%= stats.newInquiries %> unread of <%= stats.inquiries %></p>
+      </div>
+      <a class="btn btn--outline btn--sm" href="/admin/inquiries">Open Inbox</a>
+    </div>
+    <% if (inquiries.length) { %>
+    <div class="timeline">
+      <% inquiries.forEach(function (i) { %>
+      <div class="timeline__item">
+        <span class="timeline__at"><%= fmt.timeAgo(i.createdAt) %></span>
+        <div>
+          <div class="timeline__detail">
+            <strong><%= i.name %></strong>
+            <% if (i.status === 'new') { %><span class="pill">New</span><% } %>
+          </div>
+          <p class="muted" style="font-size:.82rem;margin-top:.25rem"><%= i.categoryLabel %> · <%= fmt.truncate(i.message, 110) %></p>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <p class="muted">No inquiries yet. Contact form submissions will appear here.</p>
+    <% } %>
+  </div>
+
+  <div class="a-card a-card--pad">
+    <div class="a-head">
+      <div>
+        <h2>Recent Activity</h2>
+        <p>Every change is logged</p>
+      </div>
+      <a class="btn btn--outline btn--sm" href="/admin/activity">Full Log</a>
+    </div>
+    <% if (activity.length) { %>
+    <div class="timeline">
+      <% activity.forEach(function (a) { %>
+      <div class="timeline__item">
+        <span class="timeline__at"><%= fmt.timeAgo(a.at) %></span>
+        <div>
+          <div class="timeline__action"><%= a.action %></div>
+          <% if (a.detail) { %><div class="timeline__detail"><%= a.detail %></div><% } %>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <p class="muted">Activity will be listed here.</p>
+    <% } %>
+  </div>
+</section>

@@ -1,0 +1,85 @@
+<div class="a-head">
+  <div>
+    <h2>Contact Form Inquiries</h2>
+    <p><%= counts.total %> total · <strong class="gold"><%= counts.unread %></strong> unread</p>
+  </div>
+  <form action="/admin/inquiries/mark-all-read" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="btn btn--outline btn--sm" type="submit"><%- icon('check', 'ico', 14) %> Mark all as read</button>
+  </form>
+</div>
+
+<div class="a-card a-card--pad" style="margin-bottom:1.1rem">
+  <div class="filter-group">
+    <span class="filter-group__label">Show</span>
+    <a class="chip <%= status === 'all' ? 'is-active' : '' %>" href="/admin/inquiries">All <span class="chip__count"><%= counts.total %></span></a>
+    <a class="chip <%= status === 'new' ? 'is-active' : '' %>" href="/admin/inquiries?status=new">New <span class="chip__count"><%= counts.unread %></span></a>
+    <a class="chip <%= status === 'read' ? 'is-active' : '' %>" href="/admin/inquiries?status=read">Read</a>
+    <a class="chip <%= status === 'archived' ? 'is-active' : '' %>" href="/admin/inquiries?status=archived">Archived</a>
+    <a class="chip <%= status === 'spam' ? 'is-active' : '' %>" href="/admin/inquiries?status=spam">Spam</a>
+  </div>
+</div>
+
+<% if (inquiries.length) { %>
+<div class="a-grid">
+  <% inquiries.forEach(function (i) { %>
+  <article class="inquiry <%= i.status === 'new' ? 'inquiry--new' : '' %>">
+    <div class="inquiry__top">
+      <span class="inquiry__name"><%= i.name %></span>
+      <span class="badge"><%= i.categoryLabel %></span>
+      <% if (i.status === 'new') { %><span class="pill">New</span><% } else { %><span class="pill pill--muted"><%= i.status %></span><% } %>
+      <span class="inquiry__time"><%= i.prettyDate %></span>
+    </div>
+
+    <div class="inquiry__contact">
+      <span><%- icon('mail', 'ico', 14) %> <a href="mailto:<%= i.email %>?subject=Titan%20Events%20inquiry"><%= i.email %></a></span>
+      <% if (i.phone) { %><span><%- icon('phone', 'ico', 14) %> <a href="<%= fmt.telHref(i.phone) %>"><%= i.phone %></a></span><% } %>
+      <% if (i.eventDate) { %><span><%- icon('calendar', 'ico', 14) %> Event date: <%= i.eventDate %></span><% } %>
+      <% if (i.ip) { %><span><%- icon('globe', 'ico', 14) %> <%= i.ip %></span><% } %>
+    </div>
+
+    <p class="inquiry__msg"><%= i.message %></p>
+
+    <div class="inquiry__foot">
+      <a class="btn btn--gold btn--sm" href="mailto:<%= i.email %>?subject=<%= encodeURIComponent('Re: your ' + i.categoryLabel.toLowerCase() + ' inquiry — Titan Events') %>&body=<%= encodeURIComponent(`Hi ${i.name.split(' ')[0]},\n\nThank you for contacting Titan Events.\n\n`) %>">
+        <%- icon('mail', 'ico', 14) %> Reply by Email
+      </a>
+      <% if (i.phone) { %>
+      <a class="btn btn--outline btn--sm" href="<%= fmt.telHref(i.phone) %>"><%- icon('phone', 'ico', 14) %> Call</a>
+      <% } %>
+      <% if (i.status !== 'read') { %>
+      <form action="/admin/inquiries/<%= i.id %>/status" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="hidden" name="status" value="read">
+        <button class="btn btn--outline btn--sm" type="submit"><%- icon('check', 'ico', 14) %> Mark read</button>
+      </form>
+      <% } %>
+      <% if (i.status !== 'archived') { %>
+      <form action="/admin/inquiries/<%= i.id %>/status" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="hidden" name="status" value="archived">
+        <button class="btn btn--ghost btn--sm" type="submit"><%- icon('file', 'ico', 14) %> Archive</button>
+      </form>
+      <% } %>
+      <form action="/admin/inquiries/<%= i.id %>/delete" method="post" data-confirm="Delete this inquiry from <%= i.name %>?">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn--danger btn--sm" type="submit"><%- icon('trash', 'ico', 14) %> Delete</button>
+      </form>
+    </div>
+  </article>
+  <% }); %>
+</div>
+<% } else { %>
+<div class="empty-state">
+  <img src="/img/logo-mark.png" alt="" width="60" height="60" loading="lazy">
+  <% if (status === 'all') { %>
+  <h3>No inquiries yet</h3>
+  <p>When a visitor submits the contact form, their message will appear here with a “New” badge.</p>
+  <a class="btn btn--outline" href="/contact" target="_blank" rel="noopener">Open the contact form</a>
+  <% } else { %>
+  <h3>Nothing marked as “<%= status %>”</h3>
+  <p>Try a different filter to see the rest of your inbox.</p>
+  <a class="btn btn--outline" href="/admin/inquiries">Show all inquiries</a>
+  <% } %>
+</div>
+<% } %>
