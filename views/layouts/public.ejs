@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title><%= locals.pageTitle || 'TITAN EVENTS — We Light Up Your Moments' %></title>
+  <meta name="description" content="<%= locals.pageDescription || "Titan Events plans, designs, produces, tickets and films premium weddings, parties, concerts and corporate events across Sri Lanka." %>">
+  <% if (locals.pageNoIndex || locals.noIndex) { %><meta name="robots" content="noindex, nofollow"><% } else { %><meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1"><% } %>
+  <link rel="canonical" href="<%= locals.canonical || (locals.baseUrl + currentPath) %>">
+
+  <!-- Open Graph / WhatsApp / Facebook rich preview -->
+  <meta property="og:type" content="<%= locals.ogType || 'website' %>">
+  <meta property="og:site_name" content="TITAN EVENTS">
+  <meta property="og:title" content="<%= locals.pageTitle || 'TITAN EVENTS — We Light Up Your Moments' %>">
+  <meta property="og:description" content="<%= locals.pageDescription || 'Sri Lanka\'s premier event organizers — weddings, parties, concerts and corporate events.' %>">
+  <meta property="og:url" content="<%= locals.canonical || (locals.baseUrl + currentPath) %>">
+  <meta property="og:image" content="<%= locals.baseUrl + (locals.pageImage || '/img/og-image.jpg') %>">
+  <meta property="og:image:secure_url" content="<%= locals.baseUrl + (locals.pageImage || '/img/og-image.jpg') %>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="TITAN EVENTS — We Light Up Your Moments">
+  <meta property="og:locale" content="en_LK">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= locals.pageTitle || 'TITAN EVENTS' %>">
+  <meta name="twitter:description" content="<%= locals.pageDescription || 'Sri Lanka\'s premier event organizers.' %>">
+  <meta name="twitter:image" content="<%= locals.baseUrl + (locals.pageImage || '/img/og-image.jpg') %>">
+
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-title" content="Titan Events">
+  <% if (locals.googleVerification) { %><meta name="google-site-verification" content="<%= googleVerification %>"><% } %>
+  <% if (locals.bingVerification) { %><meta name="msvalidate.01" content="<%= bingVerification %>"><% } %>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=1.0.0">
+
+  <!-- Structured data -->
+  <% (locals.jsonLd || []).forEach(function (block) { %>
+  <script type="application/ld+json"><%- JSON.stringify(block).replace(/</g, '\\u003c') %></script>
+  <% }); %>
+
+  <!-- Analytics -->
+  <% var ga = locals.analyticsId || (settings && settings.analyticsId); %>
+  <% if (ga) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= ga %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= ga %>', { anonymize_ip: true });
+  </script>
+  <% } %>
+
+  <noscript><style>.splash{display:none}.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <% if (locals.showSplash) { %>
+  <div class="splash" id="splash" role="status" aria-label="Loading TITAN EVENTS">
+    <div class="splash__mark">
+      <img src="/img/logo-mark.png" alt="Titan Events logo" width="118" height="118">
+    </div>
+    <div class="splash__brand">Titan Events</div>
+    <div class="splash__bar"><span></span></div>
+    <div class="splash__tag"><%= site.tagline %></div>
+  </div>
+  <% } %>
+
+  <%- include('../partials/public-header') %>
+
+  <main id="main">
+    <%- body %>
+  </main>
+
+  <%- include('../partials/public-footer') %>
+
+  <div class="toasts" id="toasts" aria-live="polite">
+    <%- include('../partials/toasts') %>
+  </div>
+
+  <button class="totop" id="toTop" type="button" aria-label="Back to top">
+    <%- icon('arrowDown', 'ico', 18) %>
+  </button>
+
+  <script src="/js/main.js?v=1.0.0" defer></script>
+</body>
+</html>

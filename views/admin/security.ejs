@@ -1,0 +1,74 @@
+<div class="a-grid a-grid--2e">
+  <div class="a-card a-card--pad">
+    <div class="a-head">
+      <div>
+        <h2>Admin Credentials</h2>
+        <p>Change the username and password used to reach this control panel.</p>
+      </div>
+    </div>
+
+    <form action="/admin/security" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+      <div class="field">
+        <label for="currentPassword">Current Password <span class="req">*</span></label>
+        <div class="pw-field">
+          <input class="input" id="currentPassword" name="currentPassword" type="password" required autocomplete="current-password">
+          <button class="pw-toggle" type="button" data-pw-toggle aria-label="Show password"><%= icon('eye', 'ico', 18) %></button>
+        </div>
+        <span class="field__hint">Required to confirm any change.</span>
+      </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input class="input" id="username" name="username" type="text" value="<%= adminUser %>" pattern="[A-Za-z0-9._\-]{3,40}">
+        <span class="field__hint">Letters, numbers, dots, dashes and underscores (3–40 characters).</span>
+      </div>
+
+      <div class="field">
+        <label for="newPassword">New Password <span class="muted">(leave blank to keep current)</span></label>
+        <div class="pw-field">
+          <input class="input" id="newPassword" name="newPassword" type="password" minlength="8" autocomplete="new-password">
+          <button class="pw-toggle" type="button" data-pw-toggle aria-label="Show password"><%= icon('eye', 'ico', 18) %></button>
+        </div>
+        <span class="field__hint">At least 8 characters. Use a mix of letters, numbers and symbols.</span>
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">Confirm New Password</label>
+        <div class="pw-field">
+          <input class="input" id="confirmPassword" name="confirmPassword" type="password" minlength="8" autocomplete="new-password">
+          <button class="pw-toggle" type="button" data-pw-toggle aria-label="Show password"><%= icon('eye', 'ico', 18) %></button>
+        </div>
+      </div>
+
+      <button class="btn btn--gold" type="submit"><%- icon('lock', 'ico', 16) %> Update Credentials</button>
+    </form>
+  </div>
+
+  <div class="a-grid">
+    <div class="a-card a-card--pad">
+      <div class="a-head"><div><h2>Security Status</h2><p>Active protections on this installation</p></div></div>
+      <ul class="notice-list">
+        <li><%- icon('check', 'ico', 15) %><span><strong>Encrypted passwords</strong> — bcrypt hashing with a per-install salt (cost 12).</span></li>
+        <li><%- icon('check', 'ico', 15) %><span><strong>Brute-force protection</strong> — <%= maxAttempts %> failed attempts locks a connection for <%= lockMinutes %> minutes (attempt window <%= windowMinutes %> minutes).</span></li>
+        <li><%- icon('check', 'ico', 15) %><span><strong>Rate limiting</strong> — max <%= loginLimit %> sign-in attempts/hour and <%= formLimit %> contact submissions/hour per IP.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span><strong>CSRF protection</strong> — every form carries a per-session token that is verified on submit.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span><strong>Session hardening</strong> — HTTP-only cookie, regenerated on login, 4-hour idle timeout.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span><strong>Cross-site hardening</strong> — Content Security Policy, frame protection and MIME sniffing blocked.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span><strong>Upload validation</strong> — images are re-encoded by Sharp, which strips metadata and rejects non-images.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span><strong>Audit trail</strong> — all admin actions logged to <code>data/activity.jsonl</code>.</span></li>
+      </ul>
+    </div>
+
+    <div class="a-card a-card--pad">
+      <div class="a-head"><div><h2>Best Practices</h2></div></div>
+      <ul class="notice-list">
+        <li><%- icon('sparkle', 'ico', 15) %><span>Set a strong <code>SESSION_SECRET</code> in <code>.env</code> before going live — otherwise sessions reset on restart.</span></li>
+        <li><%- icon('sparkle', 'ico', 15) %><span>Serve the site over HTTPS so the session cookie is marked <em>secure</em> automatically.</span></li>
+        <li><%- icon('sparkle', 'ico', 15) %><span>Download a data backup regularly and keep it off the server.</span></li>
+        <li><%- icon('sparkle', 'ico', 15) %><span>Forgot the password entirely? Run <code>npm run reset-password</code> on the server.</span></li>
+      </ul>
+    </div>
+  </div>
+</div>

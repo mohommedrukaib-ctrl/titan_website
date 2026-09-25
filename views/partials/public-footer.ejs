@@ -1,0 +1,65 @@
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/">
+          <img class="brand__mark" src="/img/logo-mark.png" alt="TITAN EVENTS" width="56" height="56">
+          <span class="brand__text">
+            <span class="brand__name">Titan Events</span>
+            <span class="brand__tag">We Light Up Your Moments</span>
+          </span>
+        </a>
+        <p>Sri Lanka's premier event organizers — planning, design, production, ticketing and media under one roof since 2013.</p>
+        <div class="socials">
+          <% socials.forEach(function (s) { %>
+          <a href="<%= s.url %>" target="_blank" rel="noopener noreferrer" aria-label="<%= s.name %>" title="<%= s.name %>">
+            <%- icon(s.key, 'ico', 19) %>
+          </a>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/events">Events</a></li>
+          <li><a href="/events?type=past">Past Events</a></li>
+          <li><a href="/services">Services</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Our Divisions</h4>
+        <ul>
+          <% divisions.forEach(function (d) { %>
+          <li><a href="/services#<%= d.slug %>"><%- icon(d.icon, 'ico', 14) %> <%= d.name %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="<%= fmt.telHref(settings.phonePrimary) %>"><%- icon('phone', 'ico', 15) %> <%= settings.phonePrimary %></a></li>
+          <% if (settings.phoneSecondary) { %>
+          <li><a href="<%= fmt.telHref(settings.phoneSecondary) %>"><%- icon('phone', 'ico', 15) %> <%= settings.phoneSecondary %></a></li>
+          <% } %>
+          <li><a href="mailto:<%= settings.email %>"><%- icon('mail', 'ico', 15) %> <%= settings.email %></a></li>
+          <li><%- icon('pin', 'ico', 15) %> <%= settings.address %></li>
+          <li><%- icon('clock', 'ico', 15) %> <%= settings.hours %></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <span>© <%= year %> TITAN EVENTS. All rights reserved. · <%= settings.address.split(',').slice(-2).join(',').trim() %></span>
+      <span>
+        <a href="/sitemap.xml">Sitemap</a> ·
+        <a href="/admin/login">Admin</a> ·
+        <a href="/contact">Book Now</a>
+      </span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,100 @@
+<div class="a-grid a-grid--2e">
+  <div class="a-card a-card--pad">
+    <div class="a-head">
+      <div>
+        <h2>Download a Backup</h2>
+        <p>Exports every event, announcement, inquiry and setting as a single JSON file.</p>
+      </div>
+    </div>
+    <ul class="notice-list" style="margin-bottom:1.3rem">
+      <li><%- icon('check', 'ico', 15) %><span><strong><%= counts.events %></strong> events, <strong><%= counts.announcements %></strong> announcements, <strong><%= counts.inquiries %></strong> inquiries.</span></li>
+      <li><%- icon('check', 'ico', 15) %><span>Keep a copy off the server — download it to your phone or laptop regularly.</span></li>
+      <li><%- icon('check', 'ico', 15) %><span>The file can be restored on any Titan Events installation.</span></li>
+    </ul>
+    <div class="btn-row">
+      <a class="btn btn--gold" href="/admin/backup/download" download>
+        <%- icon('download', 'ico', 16) %> Download Backup
+      </a>
+      <form action="/admin/backup/create" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn--outline" type="submit"><%- icon('backup', 'ico', 16) %> Save Snapshot on Server</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="a-card a-card--pad">
+    <div class="a-head">
+      <div>
+        <h2>Restore From a File</h2>
+        <p>Upload a previously downloaded backup to recover the website data.</p>
+      </div>
+    </div>
+    <form action="/admin/backup/restore" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="field">
+        <label for="backup">Backup file (.json)</label>
+        <input class="input" id="backup" name="backup" type="file" accept="application/json,.json" required>
+        <span class="field__hint">Maximum upload size 25 MB. The current data is snapshotted automatically before a restore.</span>
+      </div>
+      <button class="btn btn--danger" type="submit"
+              data-confirm="Restoring replaces all current events, announcements and inquiries with the contents of this file. Continue?">
+        <%- icon('upload', 'ico', 16) %> Restore Backup
+      </button>
+    </form>
+
+    <div class="alert" style="margin-top:1.3rem">
+      <%- icon('lock', 'ico', 18) %>
+      <div>
+        Automatic backups are created every time data changes and the newest <strong><%= keep %></strong> are kept.
+        Admin credentials are never overwritten by a restore.
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="a-card a-card--pad">
+  <div class="a-head">
+    <div>
+      <h2>Automatic Backup History</h2>
+      <p>Newest first · <%= backups.length %> file(s) on the server</p>
+    </div>
+  </div>
+
+  <% if (backups.length) { %>
+  <div class="a-grid">
+    <% backups.forEach(function (b) { %>
+    <div class="backup-item">
+      <%- icon('file', 'ico', 20) %>
+      <div class="backup-item__meta">
+        <strong><%= b.file %></strong>
+        <span><%= fmt.formatDateTime(b.createdAt) %><% if (b.reason) { %> · <%= b.reason %><% } %> · <%= humanFileSize(b.bytes) %></span>
+      </div>
+      <div class="row-actions">
+        <a class="icon-btn" href="/admin/backup/<%= encodeURIComponent(b.file) %>/download" title="Download this backup" aria-label="Download <%= b.file %>"><%- icon('download', 'ico', 16) %></a>
+        <form action="/admin/backup/<%= encodeURIComponent(b.file) %>/restore" method="post"
+              data-confirm="Restore data from <%= b.file %>? Current data will be backed up first.">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="icon-btn" type="submit" title="Restore this backup" aria-label="Restore <%= b.file %>"><%- icon('upload', 'ico', 16) %></button>
+        </form>
+        <form action="/admin/backup/<%= encodeURIComponent(b.file) %>/delete" method="post"
+              data-confirm="Delete the backup file <%= b.file %>?">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="icon-btn icon-btn--danger" type="submit" title="Delete this backup" aria-label="Delete <%= b.file %>"><%- icon('trash', 'ico', 16) %></button>
+        </form>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+  <% } else { %>
+  <div class="empty-state">
+    <img src="/img/logo-mark.png" alt="" width="60" height="60" loading="lazy">
+    <h3>No snapshots on the server yet</h3>
+    <p>Backups appear here automatically after your next change, or create one now with “Save Snapshot on Server”.</p>
+  </div>
+  <% } %>
+</section>
+
+<p class="stat-note">
+  Data file: <code>data/titan.json</code> · Backups folder: <code>data/backups/</code> ·
+  Activity log: <code>data/activity.jsonl</code> · Last data change: <%= fmt.formatDateTime(lastUpdated) %>
+</p>

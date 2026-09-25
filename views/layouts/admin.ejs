@@ -1,0 +1,108 @@
+<%
+  const loggedIn = Boolean(locals.adminUser);
+  const navItems = [
+    { key: 'dashboard', href: '/admin', label: 'Dashboard', icon: 'dashboard' },
+    { key: 'add-event', href: '/admin/events/new', label: 'Add Event', icon: 'plus' },
+    { key: 'inquiries', href: '/admin/inquiries', label: 'Inquiries', icon: 'mail', badge: locals.adminCounts.newInquiries },
+    { key: 'backup', href: '/admin/backup', label: 'Backup', icon: 'backup' },
+    { key: 'settings', href: '/admin/settings', label: 'Settings', icon: 'gear' },
+    { key: 'activity', href: '/admin/activity', label: 'Activity Log', icon: 'activity' },
+    { key: 'security', href: '/admin/security', label: 'Security', icon: 'lock' }
+  ];
+  const pageLabel = locals.pageTitle || 'Dashboard';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageLabel %> · Titan Events Admin</title>
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=1.0.0">
+  <link rel="stylesheet" href="/css/admin.css?v=1.0.0">
+</head>
+<body class="admin-body">
+<% if (loggedIn) { %>
+  <div class="admin-shell">
+    <aside class="admin-side" id="adminSide" aria-label="Admin navigation">
+      <a class="admin-side__brand" href="/admin">
+        <img src="/img/logo-mark.png" alt="" width="38" height="38">
+        <span>
+          <strong>TITAN</strong>
+          <span>Control Panel</span>
+        </span>
+      </a>
+
+      <nav class="admin-nav">
+        <span class="admin-nav__label">Manage</span>
+        <% navItems.slice(0, 4).forEach(function (item) { %>
+        <a href="<%= item.href %>" class="<%= locals.active === item.key ? 'is-active' : '' %>">
+          <%- icon(item.icon, 'ico', 18) %>
+          <span><%= item.label %></span>
+          <% if (item.badge) { %><span class="pill"><%= item.badge %></span><% } %>
+        </a>
+        <% }); %>
+
+        <span class="admin-nav__label">Website</span>
+        <% navItems.slice(4).forEach(function (item) { %>
+        <a href="<%= item.href %>" class="<%= locals.active === item.key ? 'is-active' : '' %>">
+          <%- icon(item.icon, 'ico', 18) %>
+          <span><%= item.label %></span>
+        </a>
+        <% }); %>
+        <a href="/" target="_blank" rel="noopener">
+          <%- icon('external', 'ico', 18) %>
+          <span>View Website</span>
+        </a>
+      </nav>
+
+      <div class="admin-side__foot">
+        <div class="admin-side__user">
+          <strong><%= adminUser.username %></strong>
+          <span>Signed in <%= fmt.timeAgo(adminUser.since) %></span>
+        </div>
+        <form action="/admin/logout" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="btn btn--outline btn--sm btn--block" type="submit"><%= icon('lock', 'ico', 14) %> Sign Out</button>
+        </form>
+      </div>
+    </aside>
+
+    <div class="side-overlay" id="sideOverlay" role="presentation"></div>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <button class="admin-mobile-toggle" id="sideToggle" type="button" aria-controls="adminSide" aria-expanded="false" aria-label="Open admin menu">
+          <%- icon('menu', 'ico', 22) %>
+        </button>
+        <h1><%= pageLabel %></h1>
+        <div class="admin-topbar__meta">
+          <span class="live">Live</span>
+          <span class="stamp">Updated <%= fmt.timeAgo(locals.adminUpdatedAt || settings.updatedAt || new Date()) %></span>
+          <a class="btn btn--outline btn--sm" href="/" target="_blank" rel="noopener">
+            <%= icon('globe', 'ico', 14) %> View Website
+          </a>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <%- body %>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <%- body %>
+<% } %>
+
+<div class="toasts" id="toasts" aria-live="polite">
+  <%- include('../partials/toasts') %>
+</div>
+
+<script src="/js/admin.js?v=1.0.0" defer></script>
+</body>
+</html>

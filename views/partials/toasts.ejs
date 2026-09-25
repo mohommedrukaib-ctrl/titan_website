@@ -1,0 +1,7 @@
+<% (locals.flash || []).forEach(function (item) { %>
+<div class="toast toast--<%= item.type %>" role="status">
+  <%- icon(item.type === 'success' ? 'check' : item.type === 'error' ? 'close' : 'sparkle', 'ico', 18) %>
+  <div><%= item.message %></div>
+  <button class="toast__close" type="button" aria-label="Dismiss">&times;</button>
+</div>
+<% }); %>

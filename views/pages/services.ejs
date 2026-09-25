@@ -1,0 +1,130 @@
+<section class="page-hero">
+  <div class="shell">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a> <span>/</span> <span>Services</span>
+    </nav>
+    <div class="page-head">
+      <span class="eyebrow">Five Divisions · One Team</span>
+      <h1>Our Services</h1>
+      <p class="lead">
+        Titan Events is built as a group of specialists rather than a single planning desk. That means your
+        concept, build, sound, ticketing and footage all come from people who work together every week —
+        with one point of contact and one accountable budget.
+      </p>
+    </div>
+    <div class="btn-row" style="margin-top:1.8rem">
+      <a class="btn btn--gold" href="/contact">Request a Quote</a>
+      <a class="btn btn--outline" href="<%= fmt.telHref(settings.phonePrimary) %>"><%= icon('phone', 'ico', 16) %> <%= settings.phonePrimary %></a>
+    </div>
+  </div>
+</section>
+
+<!-- ------------------------- division cards ------------------------- -->
+<section class="section">
+  <div class="shell grid" style="gap:1.4rem">
+    <% divisions.forEach(function (d, i) { %>
+    <article class="card reveal" id="<%= d.slug %>" style="padding:clamp(1.5rem,3vw,2.4rem);scroll-margin-top:100px">
+      <div class="grid grid--2" style="gap:clamp(1rem,3vw,2.6rem);align-items:start">
+        <div>
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.1rem">
+            <div class="why__icon" style="width:54px;height:54px"><%- icon(d.icon, 'ico', 26) %></div>
+            <div>
+              <h2 style="font-size:clamp(1.5rem,2.4vw,2rem)"><%= d.name %></h2>
+              <p class="gold" style="font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;margin-top:.35rem"><%= d.tagline %></p>
+            </div>
+          </div>
+          <p class="dim"><%= d.description %></p>
+          <div class="btn-row" style="margin-top:1.4rem">
+            <a class="btn btn--outline btn--sm" href="/contact?division=<%= encodeURIComponent(d.name) %>">Enquire About <%= d.name.replace('Titan ', '') %></a>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>What we handle</h3>
+          <ul class="notice-list">
+            <% d.services.forEach(function (s) { %>
+            <li><%- icon('check', 'ico', 15) %><span><%= s %></span></li>
+            <% }); %>
+          </ul>
+        </div>
+      </div>
+    </article>
+    <% }); %>
+
+    <!-- --------------------------- coming soon --------------------------- -->
+    <article class="card reveal" style="border-style:dashed;background:linear-gradient(180deg,rgba(201,168,76,.06),transparent);text-align:center;padding:clamp(2rem,4vw,3rem)">
+      <div class="why__icon" style="margin:0 auto 1.1rem"><%- icon('plus', 'ico', 24) %></div>
+      <h2 style="font-size:clamp(1.4rem,2.2vw,1.9rem)">More Divisions Coming Soon</h2>
+      <p class="muted" style="max-width:60ch;margin:1rem auto 1.6rem">
+        We are building two new specialist units — a permanent <strong class="gold">Titan Studio</strong> for
+        content production and <strong class="gold">Titan Travel &amp; Stay</strong> for destination guest
+        logistics. Watch this space, or tell us what service you wish existed.
+      </p>
+      <a class="btn btn--outline" href="/contact">Suggest a Service</a>
+    </article>
+  </div>
+</section>
+
+<!-- ---------------------------- why us ---------------------------- -->
+<section class="section section--panel">
+  <div class="shell">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow">Why Choose Us</span>
+      <h2>Premium Quality, Measurable Results</h2>
+      <p>Numbers we are happy to be judged on — and the standards behind them.</p>
+    </div>
+
+    <div class="stats reveal" style="margin-bottom:2.4rem">
+      <% stats.forEach(function (stat) { %>
+      <div class="stat">
+        <div class="stat__value" data-count="<%= stat.value %>" data-format="<%= stat.format || 'plain' %>">0</div>
+        <div class="stat__label"><%= stat.label %></div>
+      </div>
+      <% }); %>
+    </div>
+
+    <div class="why reveal">
+      <% whyUs.forEach(function (w) { %>
+      <div class="why__item">
+        <div class="why__icon"><%- icon(w.icon, 'ico', 22) %></div>
+        <h3><%= w.title %></h3>
+        <p><%= w.text %></p>
+      </div>
+      <% }); %>
+    </div>
+
+    <div class="section" style="padding-bottom:0">
+      <div class="section-head section-head--center reveal" style="padding-top:3.5rem">
+        <span class="eyebrow">Our Process</span>
+        <h2>Four Steps, No Surprises</h2>
+      </div>
+      <div class="process reveal">
+        <% process.forEach(function (p) { %>
+        <div class="step">
+          <span class="step__no"><%= p.step %></span>
+          <h3><%= p.title %></h3>
+          <p><%= p.text %></p>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ------------------------------ CTA ------------------------------ -->
+<section class="section section--tight">
+  <div class="shell">
+    <div class="cta-band reveal">
+      <span class="eyebrow">Start Planning</span>
+      <h2 style="margin-top:.8rem">Tell us what you're celebrating</h2>
+      <p class="lead lead--center">
+        Send us your date and ideas — or just a rough budget and a vibe. We'll put together a plan,
+        a crew and a clear price.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn--gold btn--lg" href="<%= fmt.telHref(settings.phonePrimary) %>"><%= icon('phone', 'ico', 16) %> <%= settings.phonePrimary %></a>
+        <a class="btn btn--outline btn--lg" href="<%= fmt.telHref(settings.phoneSecondary) %>"><%= icon('phone', 'ico', 16) %> <%= settings.phoneSecondary %></a>
+        <a class="btn btn--ghost btn--lg" href="/contact">Email Us</a>
+      </div>
+    </div>
+  </div>
+</section>

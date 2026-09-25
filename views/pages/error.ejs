@@ -1,0 +1,16 @@
+<section class="section" style="min-height:78vh;display:grid;place-items:center">
+  <div class="shell shell--narrow" style="text-align:center;display:grid;justify-items:center;gap:1.2rem">
+    <img src="/img/logo-mark.png" alt="" width="98" height="98" style="opacity:.9">
+    <span class="eyebrow">Error <%= locals.code || 404 %></span>
+    <h1 style="font-size:clamp(2rem,5vw,3.2rem)"><%= locals.title || 'Page not found' %></h1>
+    <p class="lead lead--center"><%= locals.message %></p>
+    <div class="btn-row btn-row--center" style="margin-top:.8rem">
+      <a class="btn btn--gold" href="/">Back to Homepage</a>
+      <a class="btn btn--outline" href="/events">Browse Events</a>
+      <a class="btn btn--ghost" href="/contact">Contact Us</a>
+    </div>
+    <p class="muted" style="font-size:.82rem;margin-top:1rem">
+      Need help right away? Call <a class="gold" href="<%= fmt.telHref(settings.phonePrimary) %>"><%= settings.phonePrimary %></a>
+    </p>
+  </div>
+</section>

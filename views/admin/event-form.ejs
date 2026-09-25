@@ -1,0 +1,70 @@
+<div class="a-grid a-grid--2">
+  <div class="a-card a-card--pad">
+    <div class="a-head">
+      <div>
+        <h2><%= mode === 'edit' ? 'Edit Event' : 'Add New Event' %></h2>
+        <p>
+          <% if (mode === 'edit') { %>
+            Update any field below. The homepage and events page refresh immediately after saving.
+          <% } else { %>
+            Fill in the details and publish. Everything goes live on the website straight away.
+          <% } %>
+        </p>
+      </div>
+      <a class="btn btn--ghost btn--sm" href="/admin"><%- icon('arrowLeft', 'ico', 14) %> Back to dashboard</a>
+    </div>
+
+    <form action="<%= mode === 'edit' ? `/admin/events/${event.id}` : '/admin/events' %>" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <%- include('./_event-fields', { values, errors, event, eventCategories, uploadLimits, mode, prefix: 'f' }) %>
+
+      <div class="a-head" style="margin:1.2rem 0 0">
+        <button class="btn btn--gold btn--lg" type="submit">
+          <%- icon('check', 'ico', 16) %> <%= mode === 'edit' ? 'Save Changes' : 'Publish Event' %>
+        </button>
+        <a class="btn btn--outline" href="/admin">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="a-grid">
+    <% if (mode === 'edit' && event) { %>
+    <div class="a-card a-card--pad">
+      <div class="a-head"><div><h2>Live Preview</h2><p>How the card looks on the website</p></div></div>
+      <article class="event-card" style="max-width:420px">
+        <div class="event-card__media">
+          <% if (event.poster) { %>
+          <img src="<%= event.poster %>" alt="<%= event.name %>" width="1200" height="800">
+          <% } else { %>
+          <%- include('../partials/shimmer', { label: event.categoryLabel }) %>
+          <% } %>
+          <span class="badge event-card__badge"><%= event.categoryLabel %></span>
+          <div class="event-card__date">
+            <strong><%= event.dayNumber %></strong>
+            <span><%= event.monthShort %> <%= event.year %></span>
+          </div>
+        </div>
+        <div class="event-card__body">
+          <h3 class="event-card__title"><%= event.name %></h3>
+          <div class="event-card__meta">
+            <span><%- icon('calendar', 'ico', 16) %> <%= event.prettyDate %></span>
+            <span><%- icon('pin', 'ico', 16) %> <%= event.venue %></span>
+          </div>
+        </div>
+      </article>
+      <a class="btn btn--outline btn--sm" style="margin-top:1rem" href="/events/<%= event.slug %>" target="_blank" rel="noopener">Open on website</a>
+    </div>
+    <% } %>
+
+    <div class="a-card a-card--pad">
+      <div class="a-head"><div><h2>Tips</h2></div></div>
+      <ul class="notice-list">
+        <li><%- icon('check', 'ico', 15) %><span>Poster images are automatically resized to 1600×1000, compressed and stripped of metadata — no need to optimise them yourself.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span>Leave the poster empty and an elegant animated gold placeholder is shown instead of a broken image.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span>Ticket links open in a new tab and only appear for <strong>upcoming</strong> events.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span>Use the clock button on the dashboard to move finished events to the archive rather than deleting them.</span></li>
+        <li><%- icon('check', 'ico', 15) %><span>Every save creates an automatic backup you can restore from the Backup page.</span></li>
+      </ul>
+    </div>
+  </div>
+</div>

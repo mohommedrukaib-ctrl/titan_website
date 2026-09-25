@@ -1,0 +1,85 @@
+<div class="a-head">
+  <div>
+    <h2>Website Settings</h2>
+    <p>Contact details and statistics shown across the public website.</p>
+  </div>
+  <a class="btn btn--outline btn--sm" href="/" target="_blank" rel="noopener"><%- icon('globe', 'ico', 14) %> View Website</a>
+</div>
+
+<form action="/admin/settings" method="post">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+  <div class="a-grid a-grid--2e">
+    <section class="a-card a-card--pad">
+      <div class="a-head"><div><h2>Contact Details</h2><p>Used in the footer, contact page and click-to-call buttons.</p></div></div>
+      <div class="field">
+        <label for="phonePrimary">Primary Phone</label>
+        <input class="input" id="phonePrimary" name="phonePrimary" type="tel" value="<%= settings.phonePrimary %>" placeholder="+94 77 123 4567">
+      </div>
+      <div class="field">
+        <label for="phoneSecondary">Secondary Phone / Landline</label>
+        <input class="input" id="phoneSecondary" name="phoneSecondary" type="tel" value="<%= settings.phoneSecondary %>">
+      </div>
+      <div class="field">
+        <label for="whatsapp">WhatsApp Number</label>
+        <input class="input" id="whatsapp" name="whatsapp" type="tel" value="<%= settings.whatsapp %>">
+        <span class="field__hint">Digits are used to build a wa.me link.</span>
+      </div>
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input class="input" id="email" name="email" type="email" value="<%= settings.email %>">
+      </div>
+      <div class="field">
+        <label for="address">Studio Address</label>
+        <input class="input" id="address" name="address" type="text" value="<%= settings.address %>">
+      </div>
+      <div class="field">
+        <label for="hours">Opening Hours</label>
+        <input class="input" id="hours" name="hours" type="text" value="<%= settings.hours %>">
+      </div>
+      <div class="field">
+        <label for="responseTime">Response Time Promise</label>
+        <input class="input" id="responseTime" name="responseTime" type="text" value="<%= settings.responseTime %>">
+      </div>
+    </section>
+
+    <section class="a-grid">
+      <div class="a-card a-card--pad">
+        <div class="a-head"><div><h2>Numbers &amp; Analytics</h2><p>Homepage statistics and visitor tracking.</p></div></div>
+        <% settings.stats.forEach(function (stat) { %>
+        <div class="field">
+          <label for="stat_<%= stat.key %>"><%= stat.label %></label>
+          <input class="input" id="stat_<%= stat.key %>" name="stat_<%= stat.key %>" type="number" min="0" step="1" value="<%= stat.value %>">
+        </div>
+        <% }); %>
+        <div class="field">
+          <label for="analyticsId">Google Analytics Measurement ID <span class="muted">(optional)</span></label>
+          <input class="input" id="analyticsId" name="analyticsId" type="text" value="<%= settings.analyticsId %>" placeholder="G-XXXXXXXXXX">
+          <span class="field__hint">Leave blank to disable analytics. You can also set GA_MEASUREMENT_ID in .env.</span>
+        </div>
+        <div class="field">
+          <label for="siteUrl">Public Site URL <span class="muted">(SEO)</span></label>
+          <input class="input" id="siteUrl" name="siteUrl" type="text" value="<%= settings.siteUrl %>" placeholder="https://titanevents.lk">
+          <span class="field__hint">Used for canonical URLs, sitemap entries and link previews. No trailing slash.</span>
+        </div>
+      </div>
+
+      <div class="a-card a-card--pad">
+        <div class="a-head"><div><h2>SEO Checklist</h2><p>What this installation already provides</p></div></div>
+        <ul class="notice-list">
+          <li><%- icon('check', 'ico', 15) %><span>Unique titles, descriptions and Open Graph tags on every page.</span></li>
+          <li><%- icon('check', 'ico', 15) %><span>Auto-generated <a class="gold" href="/sitemap.xml" target="_blank">sitemap.xml</a> including every event page.</span></li>
+          <li><%- icon('check', 'ico', 15) %><span><a class="gold" href="/robots.txt" target="_blank">robots.txt</a> that keeps the admin area out of search results.</span></li>
+          <li><%- icon('check', 'ico', 15) %><span>LocalBusiness + Event structured data for rich results.</span></li>
+          <li><%- icon('check', 'ico', 15) %><span>Web app manifest, favicons and theme colour for mobile installs.</span></li>
+          <li><%- icon('check', 'ico', 15) %><span>Search console verification via <code>GOOGLE_SITE_VERIFICATION</code> / <code>BING_SITE_VERIFICATION</code> in .env.</span></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <div class="a-head" style="margin-top:1.2rem">
+    <button class="btn btn--gold btn--lg" type="submit"><%- icon('check', 'ico', 16) %> Save Settings</button>
+    <a class="btn btn--ghost" href="/admin">Cancel</a>
+  </div>
+</form>

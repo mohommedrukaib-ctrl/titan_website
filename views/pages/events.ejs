@@ -1,0 +1,128 @@
+<%
+  const buildUrl = (patch) => {
+    const next = Object.assign({}, filters, patch);
+    const params = new URLSearchParams();
+    if (next.type && next.type !== 'upcoming') params.set('type', next.type);
+    if (next.category && next.category !== 'all') params.set('category', next.category);
+    if (next.search) params.set('q', next.search);
+    const q = params.toString();
+    return `/events${q ? `?${q}` : ''}`;
+  };
+  const headers = {
+    upcoming: { title: 'Our Events', sub: 'Everything currently on the Titan Events calendar — concerts, showcases, galas and celebrations open for booking.' },
+    past: { title: 'Past Events', sub: 'A look back at the weddings, festivals and corporate productions our teams have delivered across Sri Lanka.' }
+  };
+  const head = headers[filters.type] || headers.upcoming;
+%>
+
+<section class="page-hero">
+  <div class="shell">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a> <span>/</span> <span>Events</span>
+    </nav>
+    <div class="page-head">
+      <span class="eyebrow"><%= filters.type === 'past' ? 'Our Portfolio' : "What's Coming Up" %></span>
+      <h1><%= head.title %></h1>
+      <p class="lead"><%= head.sub %></p>
+    </div>
+  </div>
+</section>
+
+<!-- --------------------------- filter bar --------------------------- -->
+<div class="filter-bar">
+  <div class="shell filter-bar__inner">
+    <div class="filter-group" role="group" aria-label="Filter by event status">
+      <span class="filter-group__label">Event Type</span>
+      <a class="chip <%= filters.type === 'upcoming' ? 'is-active' : '' %>" href="<%= buildUrl({ type: 'upcoming' }) %>">
+        <%= icon('calendar', 'ico', 14) %> Upcoming Events <span class="chip__count"><%= counts.upcoming %></span>
+      </a>
+      <a class="chip <%= filters.type === 'past' ? 'is-active' : '' %>" href="<%= buildUrl({ type: 'past' }) %>">
+        <%= icon('clock', 'ico', 14) %> Past Events <span class="chip__count"><%= counts.past %></span>
+      </a>
+    </div>
+
+    <div class="filter-group" role="group" aria-label="Filter by category">
+      <span class="filter-group__label">Category</span>
+      <a class="chip <%= filters.category === 'all' ? 'is-active' : '' %>" href="<%= buildUrl({ category: 'all' }) %>">All</a>
+      <% categories.forEach(function (c) { %>
+      <a class="chip <%= filters.category === c.key ? 'is-active' : '' %>" href="<%= buildUrl({ category: c.key }) %>">
+        <%= icon(c.icon, 'ico', 13) %> <%= c.plural %>
+      </a>
+      <% }); %>
+    </div>
+
+    <form class="filter-search" action="/events" method="get" role="search">
+      <input type="hidden" name="type" value="<%= filters.type %>">
+      <% if (filters.category !== 'all') { %><input type="hidden" name="category" value="<%= filters.category %>"><% } %>
+      <%= icon('search', 'ico', 16) %>
+      <input type="search" name="q" value="<%= filters.search %>" placeholder="Search events…" aria-label="Search events">
+    </form>
+  </div>
+</div>
+
+<!-- ------------------------------ grid ------------------------------ -->
+<section class="section section--tight">
+  <div class="shell">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.6rem">
+      <p class="result-count">
+        Showing <strong class="gold"><%= events.length %></strong>
+        <%= filters.type === 'past' ? 'past' : 'upcoming' %>
+        <%= filters.category === 'all' ? 'event' + (events.length === 1 ? '' : 's') : ' ' + (categories.find(c => c.key === filters.category)?.plural || 'events').toLowerCase() %>
+        <% if (filters.search) { %> matching “<%= filters.search %>”<% } %>
+      </p>
+      <% if (filters.search || filters.category !== 'all') { %>
+      <a class="link-gold" href="<%= buildUrl({ search: '', category: 'all' }) %>">Clear filters</a>
+      <% } %>
+    </div>
+
+    <div class="grid grid--3">
+      <% if (events.length) { %>
+        <% events.forEach(function (e, i) { %>
+          <%- include('../partials/event-card', { e, delay: (i % 3) + 1 }) %>
+        <% }); %>
+      <% } else { %>
+        <div class="empty-state reveal">
+          <img src="/img/logo-mark.png" alt="" width="68" height="68" loading="lazy">
+          <% if (filters.search) { %>
+            <h3>No events match “<%= filters.search %>”</h3>
+            <p>Try a different keyword, or browse every event in this category.</p>
+            <a class="btn btn--outline" href="<%= buildUrl({ search: '' }) %>">Clear search</a>
+          <% } else if (filters.category !== 'all') { %>
+            <h3>No <%= filters.type %> <%= (categories.find(c => c.key === filters.category)?.plural || 'events').toLowerCase() %> listed yet</h3>
+            <p>Nothing published in this category right now — check other categories or see all events.</p>
+            <a class="btn btn--outline" href="<%= buildUrl({ category: 'all' }) %>">Show all events</a>
+          <% } else { %>
+            <h3>No <%= filters.type %> events at the moment</h3>
+            <p><%= filters.type === 'past'
+              ? 'Our portfolio is being updated. In the meantime, tell us about the event you have in mind.'
+              : 'New events are added regularly. Follow us on social media or get in touch to secure your date.' %></p>
+            <div class="btn-row btn-row--center">
+              <a class="btn btn--gold" href="/contact">Talk To Us</a>
+              <a class="btn btn--outline" href="<%= buildUrl({ type: filters.type === 'past' ? 'upcoming' : 'past' }) %>">
+                See <%= filters.type === 'past' ? 'upcoming' : 'past' %> events
+              </a>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- ------------------------------ CTA ------------------------------ -->
+<section class="section section--tight">
+  <div class="shell">
+    <div class="cta-band reveal">
+      <span class="eyebrow">Your Event Next</span>
+      <h2 style="margin-top:.8rem">Want your occasion on this list?</h2>
+      <p class="lead lead--center">
+        Weddings, birthdays, product launches, concerts — if it involves a crowd and a moment worth
+        remembering, our five divisions can plan, build and film it.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn--gold btn--lg" href="/contact">Send an Inquiry</a>
+        <a class="btn btn--outline btn--lg" href="<%= fmt.telHref(settings.phonePrimary) %>"><%= icon('phone', 'ico', 16) %> Call Us</a>
+      </div>
+    </div>
+  </div>
+</section>
